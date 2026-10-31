@@ -124,15 +124,15 @@ def main() -> None:
         with Image.open(source) as opened:
             image = ImageOps.exif_transpose(opened).convert("RGB")
             width, height = image.size
-            web_image = resized(image, 1800)
+            web_image = resized(image, 1400)
             thumb_image = resized(image, 800)
-            grid_image = resized(image, 560)
+            grid_image = resized(image, 360)
             web_path = output_dir / f"{stem}.webp"
             thumb_path = thumb_dir / f"{stem}.webp"
             grid_path = grid_dir / f"{stem}.webp"
-            web_image.save(web_path, "WEBP", quality=83, method=6)
-            thumb_image.save(thumb_path, "WEBP", quality=76, method=6)
-            grid_image.save(grid_path, "WEBP", quality=72, method=6)
+            web_image.save(web_path, "WEBP", quality=82, method=6)
+            thumb_image.save(thumb_path, "WEBP", quality=74, method=6)
+            grid_image.save(grid_path, "WEBP", quality=70, method=6)
 
         inventory.append(
             {

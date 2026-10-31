@@ -1416,7 +1416,15 @@
         weddingStage.releasePointerCapture(event.pointerId);
       }
       if (shouldNavigate) {
-        showWeddingPhoto(state.activeWeddingIndex + (deltaX < 0 ? 1 : -1));
+        const direction = deltaX < 0 ? 1 : -1;
+        weddingStage.style.setProperty(
+          "--wedding-swipe-from",
+          direction > 0 ? "9%" : "-9%",
+        );
+        weddingStage.classList.remove("is-sliding");
+        void weddingStage.offsetWidth;
+        weddingStage.classList.add("is-sliding");
+        showWeddingPhoto(state.activeWeddingIndex + direction);
       }
     };
 
@@ -1428,6 +1436,9 @@
     });
     weddingStage.addEventListener("dragstart", (event) => {
       event.preventDefault();
+    });
+    weddingImage.addEventListener("animationend", () => {
+      weddingStage.classList.remove("is-sliding");
     });
 
     $("#quickAdd").addEventListener("click", (event) => {
