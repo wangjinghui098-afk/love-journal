@@ -10,6 +10,7 @@
     />
     <link rel="icon" href="heartmark.svg" type="image/svg+xml" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="preload" as="image" href="photos/wedding/thumbs/wedding-052.webp" />
     <link rel="stylesheet" href="styles.css" />
     <title>王敬辉❤曲欣儿 · 我们的生活</title>
   </head>
@@ -386,7 +387,21 @@
               </div>
             </div>
 
+            <div class="wedding-archive-bar">
+              <span>VOL. 01 · OUR FOREVER</span>
+              <p>慢慢翻阅，光影会替我们记住。</p>
+              <span id="weddingArchiveStatus">正在整理影像</span>
+            </div>
+
             <div class="wedding-gallery" id="weddingGallery"></div>
+            <div class="wedding-gallery__footer" id="weddingGalleryFooter" hidden>
+              <p id="weddingGalleryProgress"></p>
+              <button class="wedding-load-more" id="weddingLoadMore" type="button">
+                <span>继续翻阅</span>
+                <small id="weddingLoadMoreCount"></small>
+                <svg><use href="#i-arrow"></use></svg>
+              </button>
+            </div>
             <div class="wedding-empty" id="weddingEmpty">
               <div class="wedding-empty__rings" aria-hidden="true"><span></span><span></span></div>
               <p>THE NEXT CHAPTER</p>

@@ -58,6 +58,8 @@
   const weddingPhotos = Array.isArray(window.WEDDING_PHOTOS)
     ? window.WEDDING_PHOTOS.filter((photo) => photo && photo.src)
     : [];
+  const WEDDING_BATCH_SIZE = 12;
+  const weddingPreloads = new Map();
 
   function localISO(date = new Date()) {
     const year = date.getFullYear();
@@ -285,6 +287,8 @@
     activePhotoFilter: "全部",
     activePhotoId: null,
     activeWeddingIndex: 0,
+    visibleWeddingCount: 0,
+    weddingImageRequest: 0,
     editingJournalId: null,
     editingGoalId: null,
     editingEventId: null,
@@ -572,31 +576,74 @@
           <button class="wedding-hero__photo wedding-hero__photo--${heroClasses[index]}" type="button" data-wedding-photo="${index}">
             <img
               src="${escapeHTML(photo.thumb || photo.src)}"
+              width="${Number(photo.thumbWidth || 600)}"
+              height="${Number(photo.thumbHeight || 900)}"
               alt="${escapeHTML(photo.alt || photo.title || `婚纱照 ${index + 1}`)}"
               loading="${index === 0 ? "eager" : "lazy"}"
+              fetchpriority="${index === 0 ? "high" : "auto"}"
               decoding="async"
             />
           </button>`,
       )
       .join("");
 
-    $("#weddingGallery").innerHTML = weddingPhotos
-      .map(
-        (photo, index) => `
-          <button class="wedding-shot" type="button" data-wedding-photo="${index}">
-            <img
-              src="${escapeHTML(photo.thumb || photo.src)}"
-              alt="${escapeHTML(photo.alt || photo.title || `婚纱照 ${index + 1}`)}"
-              loading="lazy"
-              decoding="async"
-            />
-            <span class="wedding-shot__caption">
-              <strong>${escapeHTML(photo.title || `第 ${index + 1} 帧`)}</strong>
-              <small>FRAME ${String(index + 1).padStart(2, "0")} · FOREVER</small>
-            </span>
-          </button>`,
-      )
-      .join("");
+    $("#weddingGallery").innerHTML = "";
+    state.visibleWeddingCount = 0;
+    renderWeddingGallery();
+  }
+
+  function renderWeddingGallery({ focusNew = false } = {}) {
+    const grid = $("#weddingGallery");
+    const start = state.visibleWeddingCount;
+    const end = Math.min(start + WEDDING_BATCH_SIZE, weddingPhotos.length);
+    const nextPhotos = weddingPhotos.slice(start, end);
+
+    grid.insertAdjacentHTML(
+      "beforeend",
+      nextPhotos
+        .map((photo, offset) => {
+          const index = start + offset;
+          const width = Number(photo.gridWidth || 560);
+          const height = Number(photo.gridHeight || 840);
+          return `
+            <button class="wedding-shot" type="button" data-wedding-photo="${index}">
+              <img
+                src="${escapeHTML(photo.grid || photo.thumb || photo.src)}"
+                width="${width}"
+                height="${height}"
+                alt="${escapeHTML(photo.alt || photo.title || `婚纱照 ${index + 1}`)}"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="wedding-shot__caption">
+                <strong>${escapeHTML(photo.title || `第 ${index + 1} 帧`)}</strong>
+                <small>FRAME ${String(index + 1).padStart(2, "0")} · FOREVER</small>
+              </span>
+            </button>`;
+        })
+        .join(""),
+    );
+
+    state.visibleWeddingCount = end;
+    const remaining = weddingPhotos.length - end;
+    $("#weddingArchiveStatus").textContent =
+      `已展开 ${end} / ${weddingPhotos.length}`;
+    $("#weddingGalleryProgress").textContent =
+      remaining > 0
+        ? `还有 ${remaining} 个瞬间`
+        : "这是我们全部的婚纱影像";
+    $("#weddingGalleryFooter").hidden = weddingPhotos.length === 0;
+    $("#weddingLoadMore").hidden = remaining === 0;
+    $("#weddingLoadMoreCount").textContent =
+      `+${Math.min(WEDDING_BATCH_SIZE, remaining)} 张`;
+
+    if (focusNew && nextPhotos.length) {
+      requestAnimationFrame(() => {
+        grid
+          .querySelector(`[data-wedding-photo="${start}"]`)
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
   }
 
   function renderHomeMemories() {
@@ -1049,7 +1096,9 @@
     state.activeWeddingIndex = nextIndex;
     const photo = weddingPhotos[nextIndex];
     const image = $("#weddingLightboxImage");
-    image.src = photo.src;
+    const requestId = ++state.weddingImageRequest;
+    image.classList.add("is-loading");
+    image.src = photo.thumb || photo.src;
     image.alt = photo.alt || photo.title || `婚纱照 ${nextIndex + 1}`;
     $("#weddingLightboxCounter").textContent =
       `${String(nextIndex + 1).padStart(2, "0")} / ${String(weddingPhotos.length).padStart(2, "0")}`;
@@ -1057,6 +1106,39 @@
       photo.title || `第 ${nextIndex + 1} 帧`;
     $("#weddingLightboxNote").textContent =
       photo.note || "愿把这一刻，写成我们很长很长的以后。";
+
+    let fullImage = weddingPreloads.get(photo.src);
+    if (!fullImage) {
+      fullImage = new Image();
+      fullImage.decoding = "async";
+      fullImage.src = photo.src;
+      weddingPreloads.set(photo.src, fullImage);
+    }
+    const revealFullImage = () => {
+      if (state.weddingImageRequest !== requestId) return;
+      image.src = photo.src;
+      image.classList.remove("is-loading");
+    };
+    if (fullImage.complete && fullImage.naturalWidth) {
+      revealFullImage();
+    } else {
+      fullImage.addEventListener("load", revealFullImage, { once: true });
+    }
+
+    requestAnimationFrame(() => {
+      for (const neighborIndex of [
+        (nextIndex + 1) % weddingPhotos.length,
+        (nextIndex - 1 + weddingPhotos.length) % weddingPhotos.length,
+      ]) {
+        const neighbor = weddingPhotos[neighborIndex];
+        if (!weddingPreloads.has(neighbor.src)) {
+          const preload = new Image();
+          preload.decoding = "async";
+          preload.src = neighbor.src;
+          weddingPreloads.set(neighbor.src, preload);
+        }
+      }
+    });
   }
 
   function openWeddingPhoto(index) {
@@ -1195,6 +1277,11 @@
         showWeddingPhoto(
           state.activeWeddingIndex + Number(weddingNav.dataset.weddingNav),
         );
+        return;
+      }
+
+      if (event.target.closest("#weddingLoadMore")) {
+        renderWeddingGallery({ focusNew: true });
         return;
       }
 

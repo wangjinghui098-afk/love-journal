@@ -4,11 +4,14 @@ import json
 import re
 from pathlib import Path
 
+from PIL import Image
+
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_PATH = ROOT / "wedding-photos.js"
 WEB_DIR = ROOT / "photos" / "wedding"
 THUMB_DIR = WEB_DIR / "thumbs"
+GRID_DIR = WEB_DIR / "grid"
 
 FEATURED = [52, 35, 58, 14, 26, 46]
 
@@ -107,12 +110,24 @@ def main() -> None:
     for index in ordered_indices:
         title = TITLES[index]
         thumb = THUMB_DIR / by_index[index].name
+        grid = GRID_DIR / by_index[index].name
         if not thumb.exists():
             raise SystemExit(f"Missing thumbnail: {thumb}")
+        if not grid.exists():
+            raise SystemExit(f"Missing grid image: {grid}")
+        with Image.open(grid) as grid_image:
+            grid_width, grid_height = grid_image.size
+        with Image.open(thumb) as thumb_image:
+            thumb_width, thumb_height = thumb_image.size
         photos.append(
             {
                 "src": f"photos/wedding/{by_index[index].name}",
                 "thumb": f"photos/wedding/thumbs/{thumb.name}",
+                "grid": f"photos/wedding/grid/{grid.name}",
+                "gridWidth": grid_width,
+                "gridHeight": grid_height,
+                "thumbWidth": thumb_width,
+                "thumbHeight": thumb_height,
                 "title": title,
                 "alt": f"{title}，婚纱照",
                 "note": note_for(index),

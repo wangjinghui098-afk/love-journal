@@ -113,8 +113,10 @@ def main() -> None:
 
     output_dir = args.output
     thumb_dir = output_dir / "thumbs"
+    grid_dir = output_dir / "grid"
     output_dir.mkdir(parents=True, exist_ok=True)
     thumb_dir.mkdir(parents=True, exist_ok=True)
+    grid_dir.mkdir(parents=True, exist_ok=True)
     inventory: list[dict] = []
 
     for index, source in enumerate(sources, start=1):
@@ -122,12 +124,15 @@ def main() -> None:
         with Image.open(source) as opened:
             image = ImageOps.exif_transpose(opened).convert("RGB")
             width, height = image.size
-            web_image = resized(image, 2200)
-            thumb_image = resized(image, 900)
+            web_image = resized(image, 1800)
+            thumb_image = resized(image, 800)
+            grid_image = resized(image, 560)
             web_path = output_dir / f"{stem}.webp"
             thumb_path = thumb_dir / f"{stem}.webp"
-            web_image.save(web_path, "WEBP", quality=84, method=6)
-            thumb_image.save(thumb_path, "WEBP", quality=80, method=6)
+            grid_path = grid_dir / f"{stem}.webp"
+            web_image.save(web_path, "WEBP", quality=83, method=6)
+            thumb_image.save(thumb_path, "WEBP", quality=76, method=6)
+            grid_image.save(grid_path, "WEBP", quality=72, method=6)
 
         inventory.append(
             {
@@ -138,6 +143,7 @@ def main() -> None:
                 "orientation": "portrait" if height >= width else "landscape",
                 "src": f"photos/wedding/{web_path.name}",
                 "thumb": f"photos/wedding/thumbs/{thumb_path.name}",
+                "grid": f"photos/wedding/grid/{grid_path.name}",
                 "thumb_path": str(thumb_path),
             }
         )
@@ -157,6 +163,9 @@ def main() -> None:
                 ),
                 "thumb_bytes": sum(
                     path.stat().st_size for path in thumb_dir.glob("*.webp")
+                ),
+                "grid_bytes": sum(
+                    path.stat().st_size for path in grid_dir.glob("*.webp")
                 ),
                 "manifest": str(manifest_path),
             },
