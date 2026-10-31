@@ -17,6 +17,7 @@ python -m http.server 4173
 ## 已包含的功能
 
 - 首页倒计时、在一起天数与生活概览
+- 婚纱照：电影感首页精选、完整线上画廊与全屏浏览
 - 时光相册：上传照片、自动压缩、分类和灯箱查看
 - 双人日记：心情、标题、正文、新增、编辑和删除
 - 心愿清单：分类、截止日期、完成状态和共同进度
@@ -35,3 +36,18 @@ python -m http.server 4173
 - 备份文件包含全部照片，请妥善保存
 
 当前版本不包含云端账号和跨设备同步。把整个文件夹上传到任意静态网站托管服务即可发布；若需要夫妻两台手机实时共享，下一步可接入 Supabase、Firebase 或自建后端。
+
+## 婚纱照发布
+
+婚纱照网页版本位于 `photos/wedding/`，缩略图位于
+`photos/wedding/thumbs/`，画廊清单由 `wedding-photos.js` 提供。
+
+重新处理一组原图：
+
+```powershell
+python scripts/prepare-wedding-photos.py `
+  --source "D:\path\to\originals" `
+  --output "photos\wedding" `
+  --contact-dir "D:\path\to\contact-sheets"
+python scripts/build-wedding-manifest.py
+```
