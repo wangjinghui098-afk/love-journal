@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5efe5" />
+    <meta
+      name="description"
+      content="朝朝暮暮，一本只属于两个人的生活记录册。"
+    />
+    <link rel="icon" href="heartmark.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>朝朝暮暮 · 我们的生活</title>
+  </head>
+  <body>
+    <svg class="svg-sprite" aria-hidden="true">
+      <symbol id="i-home" viewBox="0 0 24 24">
+        <path d="m3.5 10.7 8.5-7 8.5 7v8.8a1 1 0 0 1-1 1h-5v-6.3h-5v6.3h-5a1 1 0 0 1-1-1z" />
+      </symbol>
+      <symbol id="i-photo" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="16" rx="3" />
+        <circle cx="9" cy="10" r="1.6" />
+        <path d="m4.7 18 5.2-5 3.1 3 2.5-2.2 3.8 4.2" />
+      </symbol>
+      <symbol id="i-note" viewBox="0 0 24 24">
+        <path d="M5 3.5h10.5L20 8v12.5H5z" />
+        <path d="M15 3.5V8h5M8.5 12h8M8.5 16h6" />
+      </symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24">
+        <path d="M12 3.5c.6 4.7 3.3 7.4 8 8-4.7.6-7.4 3.3-8 8-.6-4.7-3.3-7.4-8-8 4.7-.6 7.4-3.3 8-8Z" />
+        <path d="M19 3v3M17.5 4.5h3" />
+      </symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="16" rx="3" />
+        <path d="M8 3v4M16 3v4M3 9.5h18" />
+        <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" stroke-width="2.4" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14M14 7l5 5-5 5" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24">
+        <path d="M4 7h16M9 3.5h6L16 7H8zM6.5 7l1 13.5h9l1-13.5M10 11v5.5M14 11v5.5" />
+      </symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24">
+        <path d="m4 20 4.4-1 10.3-10.3a2.1 2.1 0 0 0-3-3L5.4 16zM14.5 6.8l3 3" />
+      </symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24">
+        <path d="M20.8 5.8a5.4 5.4 0 0 0-7.6 0L12 7l-1.2-1.2a5.4 5.4 0 1 0-7.6 7.6L12 22l8.8-8.6a5.4 5.4 0 0 0 0-7.6Z" />
+      </symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19 13.5a7 7 0 0 0 0-3l2-1.5-2-3.4-2.3 1a8 8 0 0 0-2.6-1.5L13.7 2h-4l-.4 3.1a8 8 0 0 0-2.6 1.5l-2.8-1-2 3.4L4 11a7 7 0 0 0 0 2l-2.1 1.5 2 3.4 2.8-1a8 8 0 0 0 2.6 1.5l.4 3.1h4l.4-3.1a8 8 0 0 0 2.6-1.5l2.8 1 2-3.4z" />
+      </symbol>
+      <symbol id="i-download" viewBox="0 0 24 24">
+        <path d="M12 3v12M7.5 10.5 12 15l4.5-4.5M4 18.5h16" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="m5 12.5 4.2 4.2L19 7" />
+      </symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24">
+        <path d="m9 5 7 7-7 7" />
+      </symbol>
+    </svg>
+
+    <div class="ambient ambient--one"></div>
+    <div class="ambient ambient--two"></div>
+
+    <div class="app-shell">
+      <aside class="sidebar">
+        <button class="brand" type="button" data-view-target="home" aria-label="回到首页">
+          <span class="brand__mark"><svg><use href="#i-heart"></use></svg></span>
+          <span>
+            <strong>朝朝暮暮</strong>
+            <small>OUR LITTLE LIFE</small>
+          </span>
+        </button>
+
+        <button class="couple-chip" id="coupleChip" type="button" data-open="settingsModal">
+          <span class="couple-chip__avatars" aria-hidden="true">
+            <span class="avatar avatar--a" id="avatarA">我</span>
+            <span class="avatar avatar--b" id="avatarB">她</span>
+          </span>
+          <span class="couple-chip__copy">
+            <strong id="sidebarCouple">我和老婆</strong>
+            <small><span id="sidebarDays">0</span> 个相爱的日子</small>
+          </span>
+          <svg class="couple-chip__edit"><use href="#i-edit"></use></svg>
+        </button>
+
+        <nav class="primary-nav" aria-label="主要导航">
+          <p class="nav-label">我们一起</p>
+          <button class="nav-item is-active" type="button" data-view-target="home">
+            <svg><use href="#i-home"></use></svg>
+            <span>生活首页</span>
+          </button>
+          <button class="nav-item" type="button" data-view-target="photos">
+            <svg><use href="#i-photo"></use></svg>
+            <span>时光相册</span>
+            <em id="navPhotoCount">0</em>
+          </button>
+          <button class="nav-item" type="button" data-view-target="journal">
+            <svg><use href="#i-note"></use></svg>
+            <span>我们的日记</span>
+          </button>
+          <button class="nav-item" type="button" data-view-target="goals">
+            <svg><use href="#i-spark"></use></svg>
+            <span>心愿清单</span>
+          </button>
+          <button class="nav-item" type="button" data-view-target="dates">
+            <svg><use href="#i-calendar"></use></svg>
+            <span>重要日子</span>
+          </button>
+        </nav>
+
+        <blockquote class="sidebar-note">
+          <span class="sidebar-note__quote">“</span>
+          <p>生活不是我们活过的日子，<br />而是我们记住的日子。</p>
+          <span class="sidebar-note__sign">— 马尔克斯</span>
+        </blockquote>
+
+        <button class="settings-link" type="button" data-open="settingsModal">
+          <svg><use href="#i-settings"></use></svg>
+          <span>记录设置</span>
+        </button>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <button class="mobile-brand" type="button" data-view-target="home" aria-label="回到首页">
+            <span class="mobile-brand__heart">♥</span>
+            <span>朝朝暮暮</span>
+          </button>
+          <div class="page-context">
+            <small>OUR SHARED SPACE</small>
+            <strong id="pageTitle">今日份的生活</strong>
+          </div>
+          <div class="topbar__right">
+            <div class="today-stamp">
+              <span id="todayWeekday">星期六</span>
+              <strong id="todayDate">10月31日</strong>
+            </div>
+            <button
+              class="icon-button topbar__settings"
+              type="button"
+              data-open="settingsModal"
+              aria-label="记录设置"
+            >
+              <svg><use href="#i-settings"></use></svg>
+            </button>
+            <button class="button button--primary button--compact" id="quickAdd" type="button">
+              <svg><use href="#i-plus"></use></svg>
+              <span>记一笔</span>
+            </button>
+          </div>
+        </header>
+
+        <main class="main">
+          <section class="view is-active" id="view-home" data-view="home" aria-labelledby="homeTitle">
+            <div class="home-intro">
+              <div>
+                <p class="eyebrow"><span></span> TODAY, TOGETHER</p>
+                <h1 id="homeTitle">把寻常日子，<br />过成我们的<span>纪念日。</span></h1>
+              </div>
+              <p class="home-intro__tagline" id="homeTagline">
+                和你一起，把普通日子过成纪念日。
+              </p>
+            </div>
+
+            <div class="hero-layout">
+              <article class="together-card">
+                <div class="together-card__copy">
+                  <span class="card-kicker">LOVE, IN DAYS</span>
+                  <p>我们已经一起走过</p>
+                  <div class="days-number">
+                    <strong id="daysTogether">0</strong>
+                    <span>天</span>
+                  </div>
+                  <p class="together-card__since">
+                    从 <span id="startDateLabel">2023 年 5 月 20 日</span> 开始
+                  </p>
+                  <button class="text-link text-link--light" type="button" data-open="journalModal">
+                    记录今天
+                    <svg><use href="#i-arrow"></use></svg>
+                  </button>
+                </div>
+
+                <div class="together-card__art" aria-hidden="true">
+                  <div class="art-sun"></div>
+                  <div class="art-arch"></div>
+                  <div class="art-window">
+                    <span></span>
+                  </div>
+                  <div class="art-table"></div>
+                  <div class="art-vase">
+                    <i></i><i></i><i></i>
+                  </div>
+                  <div class="art-cup art-cup--left"></div>
+                  <div class="art-cup art-cup--right"></div>
+                  <div class="art-book"></div>
+                  <span class="art-caption">a quiet afternoon</span>
+                </div>
+              </article>
+
+              <div class="hero-side">
+                <article class="next-date-card">
+                  <div class="next-date-card__top">
+                    <span>下一件值得期待的事</span>
+                    <svg><use href="#i-calendar"></use></svg>
+                  </div>
+                  <div id="nextEventContent">
+                    <p class="next-date-card__name">在一起的纪念日</p>
+                    <div class="next-date-card__count">
+                      <strong>0</strong>
+                      <span>天后</span>
+                    </div>
+                    <p class="next-date-card__date">正在计算日期</p>
+                  </div>
+                  <button class="card-arrow" type="button" data-view-target="dates" aria-label="查看重要日子">
+                    <svg><use href="#i-arrow"></use></svg>
+                  </button>
+                </article>
+
+                <article class="note-card">
+                  <span class="card-kicker">A NOTE FOR US</span>
+                  <p>“爱不是彼此凝视，<br />而是一起望向同一个方向。”</p>
+                  <div class="note-card__footer">
+                    <span class="tiny-heart">♥</span>
+                    <span>今日份的小情话</span>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <div class="stats-row" aria-label="生活记录概览">
+              <article class="stat">
+                <span class="stat__icon stat__icon--rose"><svg><use href="#i-photo"></use></svg></span>
+                <div><strong id="statPhotos">0</strong><span>张回忆照片</span></div>
+              </article>
+              <article class="stat">
+                <span class="stat__icon stat__icon--sage"><svg><use href="#i-note"></use></svg></span>
+                <div><strong id="statJournals">0</strong><span>篇生活日记</span></div>
+              </article>
+              <article class="stat">
+                <span class="stat__icon stat__icon--gold"><svg><use href="#i-spark"></use></svg></span>
+                <div><strong id="statGoals">0</strong><span>个共同心愿</span></div>
+              </article>
+              <article class="stat">
+                <span class="stat__icon stat__icon--ink"><svg><use href="#i-check"></use></svg></span>
+                <div><strong id="statDone">0</strong><span>件一起完成</span></div>
+              </article>
+            </div>
+
+            <section class="home-section">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow"><span></span> RECENT MOMENTS</p>
+                  <h2>最近的片段</h2>
+                </div>
+                <button class="text-link" type="button" data-view-target="photos">
+                  查看全部
+                  <svg><use href="#i-arrow"></use></svg>
+                </button>
+              </div>
+              <div class="memory-strip" id="homeMemories"></div>
+            </section>
+
+            <div class="home-bottom-grid">
+              <section class="paper-panel journal-preview">
+                <div class="panel-heading">
+                  <div>
+                    <p class="eyebrow"><span></span> OUR NOTES</p>
+                    <h2>最近写下的</h2>
+                  </div>
+                  <button class="round-button" type="button" data-open="journalModal" aria-label="写日记">
+                    <svg><use href="#i-plus"></use></svg>
+                  </button>
+                </div>
+                <div class="journal-preview__list" id="homeJournals"></div>
+              </section>
+
+              <section class="mood-card">
+                <div>
+                  <p class="eyebrow">TODAY'S MOOD</p>
+                  <h2>今天的心情是？</h2>
+                  <p>给平凡的一天留下一点心情注脚。</p>
+                </div>
+                <div class="mood-options" id="moodOptions" aria-label="选择今天的心情">
+                  <button type="button" data-mood="sunny" title="开心">☀</button>
+                  <button type="button" data-mood="soft" title="温柔">♡</button>
+                  <button type="button" data-mood="calm" title="平静">☁</button>
+                  <button type="button" data-mood="tired" title="有点累">☾</button>
+                  <button type="button" data-mood="missing" title="想你">✦</button>
+                </div>
+                <p class="mood-feedback" id="moodFeedback">今天也要好好爱彼此。</p>
+              </section>
+            </div>
+
+            <footer class="page-footer">
+              <span>♥</span>
+              <p>愿往后的每一个普通日子，都有彼此在场。</p>
+              <span id="footerNames">阿屿 & 小满</span>
+            </footer>
+          </section>
+
+          <section class="view" id="view-photos" data-view="photos" aria-labelledby="photosTitle">
+            <div class="view-heading">
+              <div>
+                <p class="eyebrow"><span></span> OUR GALLERY</p>
+                <h1 id="photosTitle">把瞬间，<span>留在这里。</span></h1>
+                <p class="view-heading__sub">照片会泛黄，但按下快门那一刻的心动不会。</p>
+              </div>
+              <button class="button button--primary" type="button" data-open="photoModal">
+                <svg><use href="#i-plus"></use></svg>
+                添加照片
+              </button>
+            </div>
+
+            <div class="gallery-toolbar">
+              <div class="filter-pills" id="photoFilters" aria-label="照片分类">
+                <button class="is-active" type="button" data-filter="全部">全部</button>
+                <button type="button" data-filter="日常">日常</button>
+                <button type="button" data-filter="旅行">旅行</button>
+                <button type="button" data-filter="节日">节日</button>
+                <button type="button" data-filter="美食">美食</button>
+              </div>
+              <span class="gallery-count" id="galleryCount">共 0 张照片</span>
+            </div>
+
+            <div class="photo-grid" id="photoGrid"></div>
+            <div class="empty-state" id="photoEmpty" hidden>
+              <span>♡</span>
+              <h3>这一页还空着</h3>
+              <p>添加第一张属于你们的照片吧。</p>
+              <button class="button button--primary" type="button" data-open="photoModal">添加照片</button>
+            </div>
+          </section>
+
+          <section class="view" id="view-journal" data-view="journal" aria-labelledby="journalTitle">
+            <div class="view-heading">
+              <div>
+                <p class="eyebrow"><span></span> OUR STORY</p>
+                <h1 id="journalTitle">日子慢慢写，<span>爱也慢慢长。</span></h1>
+                <p class="view-heading__sub">不需要惊天动地，值得记住的小事就很好。</p>
+              </div>
+              <button class="button button--primary" type="button" data-open="journalModal">
+                <svg><use href="#i-plus"></use></svg>
+                写一篇日记
+              </button>
+            </div>
+
+            <div class="journal-layout">
+              <div class="journal-stream" id="journalStream"></div>
+              <aside class="journal-aside">
+                <div class="journal-count-card">
+                  <span class="card-kicker">WORDS TOGETHER</span>
+                  <strong id="journalWordCount">0</strong>
+                  <p>个字，组成了我们的故事</p>
+                  <div class="journal-count-card__rule"></div>
+                  <small>已写 <b id="journalEntryCount">0</b> 篇日记</small>
+                </div>
+                <blockquote>
+                  “认真记录的意义，<br />是让爱有迹可循。”
+                  <cite>— 朝朝暮暮</cite>
+                </blockquote>
+                <div class="prompt-card">
+                  <span>今天的写作提示</span>
+                  <p id="journalPrompt">今天对方做的哪件小事，让你觉得很温暖？</p>
+                  <button class="text-link" type="button" data-open="journalModal">
+                    接着写
+                    <svg><use href="#i-arrow"></use></svg>
+                  </button>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="view" id="view-goals" data-view="goals" aria-labelledby="goalsTitle">
+            <div class="view-heading">
+              <div>
+                <p class="eyebrow"><span></span> OUR BUCKET LIST</p>
+                <h1 id="goalsTitle">想和你一起，<span>完成好多好多事。</span></h1>
+                <p class="view-heading__sub">把“以后”写成具体的小计划，一件一件去实现。</p>
+              </div>
+              <button class="button button--primary" type="button" data-open="goalModal">
+                <svg><use href="#i-plus"></use></svg>
+                添加心愿
+              </button>
+            </div>
+
+            <div class="goal-progress">
+              <div class="goal-progress__copy">
+                <span>我们的共同进度</span>
+                <strong><b id="goalDoneCount">0</b> / <b id="goalTotalCount">0</b></strong>
+              </div>
+              <div class="progress-track" aria-label="心愿完成进度">
+                <span id="goalProgressBar"></span>
+              </div>
+              <p id="goalProgressText">还有好多浪漫的小事，等我们慢慢完成。</p>
+            </div>
+
+            <div class="goal-columns" id="goalColumns"></div>
+          </section>
+
+          <section class="view" id="view-dates" data-view="dates" aria-labelledby="datesTitle">
+            <div class="view-heading">
+              <div>
+                <p class="eyebrow"><span></span> OUR SPECIAL DAYS</p>
+                <h1 id="datesTitle">每一个重要日子，<span>都值得期待。</span></h1>
+                <p class="view-heading__sub">纪念日、约定日，还有我们想一起迎接的日子。</p>
+              </div>
+              <button class="button button--primary" type="button" data-open="eventModal">
+                <svg><use href="#i-plus"></use></svg>
+                添加日子
+              </button>
+            </div>
+
+            <div class="date-hero">
+              <div class="date-hero__copy">
+                <p class="eyebrow">COUNTDOWN TO</p>
+                <h2 id="dateHeroName">在一起的纪念日</h2>
+                <div><strong id="dateHeroDays">0</strong><span>天后</span></div>
+                <p id="dateHeroDate">正在计算</p>
+              </div>
+              <div class="date-hero__seal" aria-hidden="true">
+                <span>TOGETHER</span>
+                <b>∞</b>
+                <span>FOREVER</span>
+              </div>
+            </div>
+
+            <div class="section-heading date-list-heading">
+              <div>
+                <p class="eyebrow"><span></span> UPCOMING</p>
+                <h2>值得期待</h2>
+              </div>
+            </div>
+            <div class="dates-grid" id="datesGrid"></div>
+          </section>
+        </main>
+
+        <nav class="mobile-nav" aria-label="移动端导航">
+          <button class="is-active" type="button" data-view-target="home">
+            <svg><use href="#i-home"></use></svg><span>首页</span>
+          </button>
+          <button type="button" data-view-target="photos">
+            <svg><use href="#i-photo"></use></svg><span>相册</span>
+          </button>
+          <button class="mobile-nav__add" type="button" id="mobileQuickAdd" aria-label="记一笔">
+            <svg><use href="#i-plus"></use></svg>
+          </button>
+          <button type="button" data-view-target="journal">
+            <svg><use href="#i-note"></use></svg><span>日记</span>
+          </button>
+          <button type="button" data-view-target="goals">
+            <svg><use href="#i-spark"></use></svg><span>心愿</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <div class="quick-menu" id="quickMenu" role="menu" hidden>
+      <button type="button" data-open="photoModal" role="menuitem">
+        <span class="quick-menu__icon quick-menu__icon--rose"><svg><use href="#i-photo"></use></svg></span>
+        <span><strong>添加照片</strong><small>留住此刻的样子</small></span>
+      </button>
+      <button type="button" data-open="journalModal" role="menuitem">
+        <span class="quick-menu__icon quick-menu__icon--sage"><svg><use href="#i-note"></use></svg></span>
+        <span><strong>写篇日记</strong><small>记下今天的小事</small></span>
+      </button>
+      <button type="button" data-open="goalModal" role="menuitem">
+        <span class="quick-menu__icon quick-menu__icon--gold"><svg><use href="#i-spark"></use></svg></span>
+        <span><strong>添加心愿</strong><small>计划下一次出发</small></span>
+      </button>
+    </div>
+
+    <dialog class="modal" id="photoModal">
+      <form method="dialog" class="modal__card" id="photoForm">
+        <div class="modal__head">
+          <div>
+            <p class="eyebrow"><span></span> NEW MEMORY</p>
+            <h2>添加一段回忆</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="关闭">
+            <svg><use href="#i-close"></use></svg>
+          </button>
+        </div>
+        <label class="upload-zone" id="uploadZone">
+          <input type="file" id="photoFile" accept="image/*" required />
+          <span class="upload-zone__empty" id="uploadEmpty">
+            <svg><use href="#i-photo"></use></svg>
+            <strong>选择一张照片</strong>
+            <small>支持 JPG、PNG、WEBP，最大 12MB</small>
+          </span>
+          <img id="photoPreview" alt="照片预览" hidden />
+        </label>
+        <div class="form-grid">
+          <label class="field field--wide">
+            <span>给这一刻起个名字</span>
+            <input type="text" id="photoTitle" maxlength="40" placeholder="比如：雨停后的海边散步" required />
+          </label>
+          <label class="field">
+            <span>日期</span>
+            <input type="date" id="photoDate" required />
+          </label>
+          <label class="field">
+            <span>分类</span>
+            <select id="photoCategory">
+              <option>日常</option>
+              <option>旅行</option>
+              <option>节日</option>
+              <option>美食</option>
+            </select>
+          </label>
+          <label class="field field--wide">
+            <span>这一刻的故事 <small>选填</small></span>
+            <textarea id="photoNote" rows="3" maxlength="200" placeholder="当时发生了什么？为什么想记住它？"></textarea>
+          </label>
+        </div>
+        <div class="modal__actions">
+          <button class="button button--ghost" type="button" data-close>先不记了</button>
+          <button class="button button--primary" type="submit">保存这段回忆</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="journalModal">
+      <form method="dialog" class="modal__card" id="journalForm">
+        <div class="modal__head">
+          <div>
+            <p class="eyebrow"><span></span> A NOTE FOR US</p>
+            <h2>写下今天</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="关闭">
+            <svg><use href="#i-close"></use></svg>
+          </button>
+        </div>
+        <div class="form-grid">
+          <label class="field">
+            <span>日期</span>
+            <input type="date" id="journalDate" required />
+          </label>
+          <label class="field">
+            <span>今天的心情</span>
+            <select id="journalMood">
+              <option value="sunny">☀ 开心</option>
+              <option value="soft">♥ 温柔</option>
+              <option value="calm">☁ 平静</option>
+              <option value="tired">☾ 有点累</option>
+              <option value="missing">✦ 想你</option>
+            </select>
+          </label>
+          <label class="field field--wide">
+            <span>标题</span>
+            <input type="text" id="journalEntryTitle" maxlength="60" placeholder="给今天取个名字" required />
+          </label>
+          <label class="field field--wide">
+            <span>想写下的话</span>
+            <textarea id="journalBody" rows="7" maxlength="2000" placeholder="今天，我们……" required></textarea>
+          </label>
+        </div>
+        <div class="modal__actions">
+          <button class="button button--ghost" type="button" data-close>稍后再写</button>
+          <button class="button button--primary" type="submit">放进日记本</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="goalModal">
+      <form method="dialog" class="modal__card" id="goalForm">
+        <div class="modal__head">
+          <div>
+            <p class="eyebrow"><span></span> SOMEDAY, TOGETHER</p>
+            <h2>添加一个共同心愿</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="关闭">
+            <svg><use href="#i-close"></use></svg>
+          </button>
+        </div>
+        <div class="form-grid">
+          <label class="field field--wide">
+            <span>我们想一起完成</span>
+            <input type="text" id="goalTitle" maxlength="60" placeholder="比如：去看一次极光" required />
+          </label>
+          <label class="field">
+            <span>心愿分类</span>
+            <select id="goalCategory">
+              <option>生活</option>
+              <option>旅行</option>
+              <option>成长</option>
+              <option>浪漫</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>想完成的时间 <small>选填</small></span>
+            <input type="date" id="goalDate" />
+          </label>
+          <label class="field field--wide">
+            <span>具体的小计划 <small>选填</small></span>
+            <textarea id="goalNote" rows="3" maxlength="200" placeholder="准备什么时候、怎么去做？"></textarea>
+          </label>
+        </div>
+        <div class="modal__actions">
+          <button class="button button--ghost" type="button" data-close>取消</button>
+          <button class="button button--primary" type="submit">加入清单</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="eventModal">
+      <form method="dialog" class="modal__card" id="eventForm">
+        <div class="modal__head">
+          <div>
+            <p class="eyebrow"><span></span> SAVE THE DATE</p>
+            <h2>记下一个重要日子</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="关闭">
+            <svg><use href="#i-close"></use></svg>
+          </button>
+        </div>
+        <div class="form-grid">
+          <label class="field field--wide">
+            <span>这一天是什么日子</span>
+            <input type="text" id="eventTitle" maxlength="40" placeholder="比如：第一次见面的纪念日" required />
+          </label>
+          <label class="field">
+            <span>日期</span>
+            <input type="date" id="eventDate" required />
+          </label>
+          <label class="field">
+            <span>重复方式</span>
+            <select id="eventRepeat">
+              <option value="annual">每年都过</option>
+              <option value="once">仅这一次</option>
+            </select>
+          </label>
+        </div>
+        <div class="modal__actions">
+          <button class="button button--ghost" type="button" data-close>取消</button>
+          <button class="button button--primary" type="submit">保存这个日子</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="settingsModal">
+      <form method="dialog" class="modal__card" id="settingsForm">
+        <div class="modal__head">
+          <div>
+            <p class="eyebrow"><span></span> MAKE IT YOURS</p>
+            <h2>把这里变成你们的家</h2>
+          </div>
+          <button class="icon-button" type="button" data-close aria-label="关闭">
+            <svg><use href="#i-close"></use></svg>
+          </button>
+        </div>
+        <div class="form-grid">
+          <label class="field">
+            <span>你的名字</span>
+            <input type="text" id="personA" maxlength="12" required />
+          </label>
+          <label class="field">
+            <span>另一半的名字</span>
+            <input type="text" id="personB" maxlength="12" required />
+          </label>
+          <label class="field field--wide">
+            <span>我们在一起的第一天</span>
+            <input type="date" id="startDate" required />
+          </label>
+          <label class="field field--wide">
+            <span>想放在首页的一句话</span>
+            <textarea id="homeTaglineInput" rows="2" maxlength="80" required></textarea>
+          </label>
+        </div>
+        <div class="data-tools">
+          <div>
+            <strong>备份你们的记录</strong>
+            <p>导出的文件包含照片、日记和全部清单，请妥善保存。</p>
+          </div>
+          <div class="data-tools__actions">
+            <button class="button button--ghost button--small" type="button" id="exportData">
+              <svg><use href="#i-download"></use></svg> 导出备份
+            </button>
+            <label class="button button--ghost button--small file-button">
+              导入备份
+              <input type="file" id="importData" accept=".json,application/json" />
+            </label>
+          </div>
+        </div>
+        <button class="danger-link" type="button" id="resetData">
+          清空所有记录，恢复示例内容
+        </button>
+        <div class="modal__actions">
+          <button class="button button--ghost" type="button" data-close>取消</button>
+          <button class="button button--primary" type="submit">保存设置</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="lightbox" id="lightbox">
+      <button class="lightbox__close icon-button" type="button" data-close aria-label="关闭">
+        <svg><use href="#i-close"></use></svg>
+      </button>
+      <div class="lightbox__image-wrap" id="lightboxImage"></div>
+      <div class="lightbox__details">
+        <span class="card-kicker" id="lightboxCategory">日常</span>
+        <h2 id="lightboxTitle"></h2>
+        <p id="lightboxNote"></p>
+        <div class="lightbox__footer">
+          <span id="lightboxDate"></span>
+          <button class="danger-link" type="button" id="deletePhoto">
+            <svg><use href="#i-trash"></use></svg> 删除这张照片
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span>♥</span>
+      <p>已保存</p>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
