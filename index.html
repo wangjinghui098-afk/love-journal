@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f5efe5" />
+    <meta name="theme-color" content="#15100f" />
     <meta
       name="description"
       content="朝朝暮暮，一本只属于两个人的生活记录册。"
@@ -100,6 +100,11 @@
             <svg><use href="#i-home"></use></svg>
             <span>生活首页</span>
           </button>
+          <button class="nav-item nav-item--wedding" type="button" data-view-target="wedding">
+            <svg><use href="#i-heart"></use></svg>
+            <span>婚纱照</span>
+            <em id="navWeddingCount">0</em>
+          </button>
           <button class="nav-item" type="button" data-view-target="photos">
             <svg><use href="#i-photo"></use></svg>
             <span>时光相册</span>
@@ -163,7 +168,62 @@
 
         <main class="main">
           <section class="view is-active" id="view-home" data-view="home" aria-labelledby="homeTitle">
-            <div class="home-intro">
+            <section class="wedding-hero" aria-labelledby="weddingHeroTitle">
+              <div class="wedding-hero__glow wedding-hero__glow--one" aria-hidden="true"></div>
+              <div class="wedding-hero__glow wedding-hero__glow--two" aria-hidden="true"></div>
+              <div class="wedding-hero__stars" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+              <div class="wedding-hero__copy">
+                <p class="wedding-kicker"><span></span> THE ART OF US · WEDDING STORY</p>
+                <h2 id="weddingHeroTitle">
+                  <span>此刻，</span>
+                  往后<span>余生。</span>
+                </h2>
+                <p class="wedding-hero__lead">
+                  风把誓言吹向很远的地方，<br />
+                  而你始终是我目光的归处。
+                </p>
+                <div class="wedding-hero__actions">
+                  <button class="wedding-button wedding-button--light" type="button" data-view-target="wedding">
+                    <span>打开婚纱照</span>
+                    <svg><use href="#i-arrow"></use></svg>
+                  </button>
+                  <button class="wedding-button wedding-button--ghost" type="button" data-scroll-target="dailyStory">
+                    继续看我们的日常
+                  </button>
+                </div>
+              </div>
+
+              <div class="wedding-hero__visual">
+                <div class="wedding-hero__mosaic" id="weddingHeroMosaic" aria-label="婚纱照精选">
+                  <div class="wedding-ghost wedding-ghost--lead">
+                    <span>WAITING FOR<br />OUR MOMENTS</span>
+                    <i></i>
+                  </div>
+                  <div class="wedding-ghost wedding-ghost--small wedding-ghost--top">
+                    <span>01</span>
+                  </div>
+                  <div class="wedding-ghost wedding-ghost--small wedding-ghost--bottom">
+                    <span>02</span>
+                  </div>
+                </div>
+                <span class="wedding-hero__edition">FOREVER / EDITION 01</span>
+                <div class="wedding-hero__seal" aria-hidden="true">
+                  <span>FOR</span><strong>∞</strong><span>EVER</span>
+                </div>
+              </div>
+
+              <div class="wedding-hero__ticker" aria-hidden="true">
+                <span>LOVE IN EVERY FRAME</span>
+                <i>✦</i>
+                <span>TOGETHER SINCE DAY ONE</span>
+                <i>✦</i>
+                <span>OUR FOREVER</span>
+              </div>
+            </section>
+
+            <div class="home-intro" id="dailyStory">
               <div>
                 <p class="eyebrow"><span></span> TODAY, TOGETHER</p>
                 <h1 id="homeTitle">把寻常日子，<br />过成我们的<span>纪念日。</span></h1>
@@ -309,6 +369,32 @@
             </footer>
           </section>
 
+          <section class="view wedding-view" id="view-wedding" data-view="wedding" aria-labelledby="weddingTitle">
+            <div class="wedding-view__intro">
+              <div>
+                <p class="wedding-kicker"><span></span> OUR WEDDING COLLECTION</p>
+                <h1 id="weddingTitle">被定格的，<em>不只是今天。</em></h1>
+                <p>
+                  每一道光、每一次回眸，都是我们写给未来的情书。
+                  在这里慢慢翻看属于我们的婚纱影像。
+                </p>
+              </div>
+              <div class="wedding-view__count">
+                <span>FRAMES OF LOVE</span>
+                <strong id="weddingPhotoCount">00</strong>
+                <small>张婚纱照</small>
+              </div>
+            </div>
+
+            <div class="wedding-gallery" id="weddingGallery"></div>
+            <div class="wedding-empty" id="weddingEmpty">
+              <div class="wedding-empty__rings" aria-hidden="true"><span></span><span></span></div>
+              <p>THE NEXT CHAPTER</p>
+              <h2>我们的婚纱照，正在路上</h2>
+              <small>照片放进网站文件夹后，这里会自动变成属于你们的影像集。</small>
+            </div>
+          </section>
+
           <section class="view" id="view-photos" data-view="photos" aria-labelledby="photosTitle">
             <div class="view-heading">
               <div>
@@ -449,6 +535,9 @@
           <button class="is-active" type="button" data-view-target="home">
             <svg><use href="#i-home"></use></svg><span>首页</span>
           </button>
+          <button type="button" data-view-target="wedding">
+            <svg><use href="#i-heart"></use></svg><span>婚纱照</span>
+          </button>
           <button type="button" data-view-target="photos">
             <svg><use href="#i-photo"></use></svg><span>相册</span>
           </button>
@@ -479,6 +568,26 @@
         <span><strong>添加心愿</strong><small>计划下一次出发</small></span>
       </button>
     </div>
+
+    <dialog class="wedding-lightbox" id="weddingLightbox">
+      <div class="wedding-lightbox__stage">
+        <img id="weddingLightboxImage" alt="" />
+        <button class="wedding-lightbox__close" type="button" data-close aria-label="关闭">
+          <svg><use href="#i-close"></use></svg>
+        </button>
+        <button class="wedding-lightbox__nav wedding-lightbox__nav--prev" type="button" data-wedding-nav="-1" aria-label="上一张">
+          <svg><use href="#i-chevron"></use></svg>
+        </button>
+        <button class="wedding-lightbox__nav wedding-lightbox__nav--next" type="button" data-wedding-nav="1" aria-label="下一张">
+          <svg><use href="#i-chevron"></use></svg>
+        </button>
+      </div>
+      <div class="wedding-lightbox__caption">
+        <span id="weddingLightboxCounter">01 / 01</span>
+        <h2 id="weddingLightboxTitle"></h2>
+        <p id="weddingLightboxNote"></p>
+      </div>
+    </dialog>
 
     <dialog class="modal" id="photoModal">
       <form method="dialog" class="modal__card" id="photoForm">
@@ -725,6 +834,7 @@
       <p>已保存</p>
     </div>
 
+    <script src="wedding-photos.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

@@ -39,6 +39,7 @@
 
   const pageTitles = {
     home: "今日份的生活",
+    wedding: "婚纱照",
     photos: "时光相册",
     journal: "我们的日记",
     goals: "心愿清单",
@@ -54,6 +55,9 @@
   ];
 
   const visualNames = ["coast", "dinner", "walk", "flowers", "home", "night"];
+  const weddingPhotos = Array.isArray(window.WEDDING_PHOTOS)
+    ? window.WEDDING_PHOTOS.filter((photo) => photo && photo.src)
+    : [];
 
   function localISO(date = new Date()) {
     const year = date.getFullYear();
@@ -280,6 +284,7 @@
     photos: [],
     activePhotoFilter: "全部",
     activePhotoId: null,
+    activeWeddingIndex: 0,
     editingJournalId: null,
     editingGoalId: null,
     editingEventId: null,
@@ -548,6 +553,50 @@
     $("#statGoals").textContent = state.goals.length;
     $("#statDone").textContent = completed;
     $("#navPhotoCount").textContent = state.photos.length;
+  }
+
+  function renderWeddingStory() {
+    const total = weddingPhotos.length;
+    $("#navWeddingCount").textContent = total;
+    $("#weddingPhotoCount").textContent = String(total).padStart(2, "0");
+    $("#weddingEmpty").hidden = total > 0;
+    $("#weddingGallery").hidden = total === 0;
+
+    if (!total) return;
+
+    const heroClasses = ["lead", "top", "bottom"];
+    $("#weddingHeroMosaic").innerHTML = weddingPhotos
+      .slice(0, 3)
+      .map(
+        (photo, index) => `
+          <button class="wedding-hero__photo wedding-hero__photo--${heroClasses[index]}" type="button" data-wedding-photo="${index}">
+            <img
+              src="${escapeHTML(photo.thumb || photo.src)}"
+              alt="${escapeHTML(photo.alt || photo.title || `婚纱照 ${index + 1}`)}"
+              loading="${index === 0 ? "eager" : "lazy"}"
+              decoding="async"
+            />
+          </button>`,
+      )
+      .join("");
+
+    $("#weddingGallery").innerHTML = weddingPhotos
+      .map(
+        (photo, index) => `
+          <button class="wedding-shot" type="button" data-wedding-photo="${index}">
+            <img
+              src="${escapeHTML(photo.thumb || photo.src)}"
+              alt="${escapeHTML(photo.alt || photo.title || `婚纱照 ${index + 1}`)}"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="wedding-shot__caption">
+              <strong>${escapeHTML(photo.title || `第 ${index + 1} 帧`)}</strong>
+              <small>FRAME ${String(index + 1).padStart(2, "0")} · FOREVER</small>
+            </span>
+          </button>`,
+      )
+      .join("");
   }
 
   function renderHomeMemories() {
@@ -855,6 +904,7 @@
     renderIdentity();
     renderNextEvent();
     renderStats();
+    renderWeddingStory();
     renderHomeMemories();
     renderHomeJournals();
     renderMood();
@@ -936,6 +986,9 @@
   function closeDialog(dialog) {
     if (dialog?.open) dialog.close();
     if (dialog?.id === "lightbox") state.activePhotoId = null;
+    if (dialog?.id === "weddingLightbox") {
+      $("#weddingLightboxImage").removeAttribute("src");
+    }
     if (dialog?.id === "photoModal" && state.selectedPhotoPreviewURL) {
       URL.revokeObjectURL(state.selectedPhotoPreviewURL);
       state.selectedPhotoPreviewURL = null;
@@ -987,6 +1040,30 @@
     $("#lightboxNote").textContent = photo.note || "有些瞬间，不需要太多解释。";
     $("#lightboxDate").textContent = formatChineseDate(photo.date);
     $("#lightbox").showModal();
+  }
+
+  function showWeddingPhoto(index) {
+    if (!weddingPhotos.length) return;
+    const nextIndex =
+      (Number(index) + weddingPhotos.length) % weddingPhotos.length;
+    state.activeWeddingIndex = nextIndex;
+    const photo = weddingPhotos[nextIndex];
+    const image = $("#weddingLightboxImage");
+    image.src = photo.src;
+    image.alt = photo.alt || photo.title || `婚纱照 ${nextIndex + 1}`;
+    $("#weddingLightboxCounter").textContent =
+      `${String(nextIndex + 1).padStart(2, "0")} / ${String(weddingPhotos.length).padStart(2, "0")}`;
+    $("#weddingLightboxTitle").textContent =
+      photo.title || `第 ${nextIndex + 1} 帧`;
+    $("#weddingLightboxNote").textContent =
+      photo.note || "愿把这一刻，写成我们很长很长的以后。";
+  }
+
+  function openWeddingPhoto(index) {
+    if (!weddingPhotos.length) return;
+    showWeddingPhoto(index);
+    const dialog = $("#weddingLightbox");
+    if (!dialog.open) dialog.showModal();
   }
 
   async function compressImage(file) {
@@ -1080,6 +1157,15 @@
 
   function bindEvents() {
     document.addEventListener("click", async (event) => {
+      const scrollButton = event.target.closest("[data-scroll-target]");
+      if (scrollButton) {
+        document.getElementById(scrollButton.dataset.scrollTarget)?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+        return;
+      }
+
       const viewButton = event.target.closest("[data-view-target]");
       if (viewButton) {
         switchView(viewButton.dataset.viewTarget);
@@ -1095,6 +1181,20 @@
       const closeButton = event.target.closest("[data-close]");
       if (closeButton) {
         closeDialog(closeButton.closest("dialog"));
+        return;
+      }
+
+      const weddingPhoto = event.target.closest("[data-wedding-photo]");
+      if (weddingPhoto) {
+        openWeddingPhoto(Number(weddingPhoto.dataset.weddingPhoto));
+        return;
+      }
+
+      const weddingNav = event.target.closest("[data-wedding-nav]");
+      if (weddingNav) {
+        showWeddingPhoto(
+          state.activeWeddingIndex + Number(weddingNav.dataset.weddingNav),
+        );
         return;
       }
 
@@ -1457,6 +1557,16 @@
     });
 
     document.addEventListener("keydown", (event) => {
+      if ($("#weddingLightbox").open) {
+        if (event.key === "ArrowLeft") {
+          showWeddingPhoto(state.activeWeddingIndex - 1);
+          return;
+        }
+        if (event.key === "ArrowRight") {
+          showWeddingPhoto(state.activeWeddingIndex + 1);
+          return;
+        }
+      }
       if (event.key === "Escape") $("#quickMenu").hidden = true;
     });
 
