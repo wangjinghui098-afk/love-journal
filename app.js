@@ -1272,14 +1272,6 @@
         return;
       }
 
-      const weddingNav = event.target.closest("[data-wedding-nav]");
-      if (weddingNav) {
-        showWeddingPhoto(
-          state.activeWeddingIndex + Number(weddingNav.dataset.weddingNav),
-        );
-        return;
-      }
-
       if (event.target.closest("#weddingLoadMore")) {
         renderWeddingGallery({ focusNew: true });
         return;
@@ -1375,6 +1367,67 @@
       if (!event.target.closest("#quickMenu") && !event.target.closest("#quickAdd")) {
         $("#quickMenu").hidden = true;
       }
+    });
+
+    const weddingStage = $(".wedding-lightbox__stage");
+    const weddingImage = $("#weddingLightboxImage");
+    let weddingSwipe = null;
+
+    weddingStage.addEventListener("pointerdown", (event) => {
+      if (event.target.closest("button")) return;
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      weddingSwipe = {
+        id: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+      };
+      weddingStage.setPointerCapture(event.pointerId);
+      weddingStage.classList.add("is-swiping");
+      weddingImage.style.transition = "none";
+    });
+
+    weddingStage.addEventListener("pointermove", (event) => {
+      if (!weddingSwipe || event.pointerId !== weddingSwipe.id) return;
+      const deltaX = event.clientX - weddingSwipe.x;
+      const deltaY = event.clientY - weddingSwipe.y;
+      if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+      event.preventDefault();
+      const offset = Math.max(-120, Math.min(120, deltaX));
+      weddingImage.style.transform = `translate3d(${offset}px, 0, 0) scale(.985)`;
+      weddingImage.style.opacity = String(
+        1 - Math.min(Math.abs(offset) / 520, 0.16),
+      );
+    });
+
+    const finishWeddingSwipe = (event, cancelled = false) => {
+      if (!weddingSwipe || event.pointerId !== weddingSwipe.id) return;
+      const deltaX = event.clientX - weddingSwipe.x;
+      const deltaY = event.clientY - weddingSwipe.y;
+      const shouldNavigate =
+        !cancelled &&
+        Math.abs(deltaX) >= 52 &&
+        Math.abs(deltaX) > Math.abs(deltaY) * 1.15;
+      weddingSwipe = null;
+      weddingStage.classList.remove("is-swiping");
+      weddingImage.style.transition = "";
+      weddingImage.style.transform = "";
+      weddingImage.style.opacity = "";
+      if (weddingStage.hasPointerCapture(event.pointerId)) {
+        weddingStage.releasePointerCapture(event.pointerId);
+      }
+      if (shouldNavigate) {
+        showWeddingPhoto(state.activeWeddingIndex + (deltaX < 0 ? 1 : -1));
+      }
+    };
+
+    weddingStage.addEventListener("pointerup", (event) => {
+      finishWeddingSwipe(event);
+    });
+    weddingStage.addEventListener("pointercancel", (event) => {
+      finishWeddingSwipe(event, true);
+    });
+    weddingStage.addEventListener("dragstart", (event) => {
+      event.preventDefault();
     });
 
     $("#quickAdd").addEventListener("click", (event) => {

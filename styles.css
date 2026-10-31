@@ -3634,7 +3634,13 @@ svg {
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 50%, #2d201b, #0d0b0a 72%);
+  cursor: grab;
   place-items: center;
+  touch-action: pan-y pinch-zoom;
+}
+
+.wedding-lightbox__stage.is-swiping {
+  cursor: grabbing;
 }
 
 .wedding-lightbox__stage img {
@@ -3642,6 +3648,8 @@ svg {
   height: 100%;
   object-fit: contain;
   opacity: 1;
+  pointer-events: none;
+  user-select: none;
   transition:
     filter 0.24s ease,
     opacity 0.2s ease;
@@ -3671,40 +3679,6 @@ svg {
 .wedding-lightbox__close svg {
   width: 16px;
   height: 16px;
-}
-
-.wedding-lightbox__nav {
-  position: absolute;
-  z-index: 2;
-  top: 50%;
-  display: grid;
-  width: 42px;
-  height: 42px;
-  color: #fff;
-  background: rgba(17, 13, 11, 0.49);
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 50%;
-  place-items: center;
-  backdrop-filter: blur(10px);
-  transform: translateY(-50%);
-}
-
-.wedding-lightbox__nav:hover {
-  background: rgba(154, 104, 65, 0.68);
-}
-
-.wedding-lightbox__nav--prev {
-  left: 18px;
-  transform: translateY(-50%) rotate(180deg);
-}
-
-.wedding-lightbox__nav--next {
-  right: 18px;
-}
-
-.wedding-lightbox__nav svg {
-  width: 17px;
-  height: 17px;
 }
 
 .wedding-lightbox__caption {
@@ -3738,6 +3712,26 @@ svg {
   font-family: var(--serif);
   font-size: 10px;
   line-height: 1.85;
+}
+
+.wedding-lightbox__gesture {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+  color: rgba(248, 238, 224, 0.38);
+}
+
+.wedding-lightbox__gesture span {
+  flex: 1;
+  height: 1px;
+  background: rgba(248, 238, 224, 0.12);
+}
+
+.wedding-lightbox__gesture small {
+  flex: 0 0 auto;
+  font-size: 7px;
+  letter-spacing: 0.14em;
 }
 
 @keyframes wedding-glow {
@@ -4192,22 +4186,8 @@ svg {
     border-radius: 18px;
   }
 
-  .wedding-lightbox__nav {
-    width: 36px;
-    height: 36px;
-    backdrop-filter: none;
-  }
-
   .wedding-lightbox__close {
     backdrop-filter: none;
-  }
-
-  .wedding-lightbox__nav--prev {
-    left: 10px;
-  }
-
-  .wedding-lightbox__nav--next {
-    right: 10px;
   }
 
   .home-intro h1,
